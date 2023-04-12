@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/static/styles.css" />
+    <title>Image classification</title>
+  </head>
+  <body>
+    <div class="main">
+      <div class="mainform">
+        <h3 class="head">Upload you file here</h3>
+        <input type="file" name="image" id="image" onchange="loadImage(this)" />
+        <button class="submit" id="submit">Submit</button>
+      </div>
+      <div class="preview"><h3 class="head">Image Preview</h3></div>
+    </div>
+
+    <div class="results"></div>
+  </body>
+  <script>
+    document.getElementById("submit").addEventListener("click", function () {
+      // Get the selected image from the input element
+      const fileInput = document.getElementById("image");
+      const file = fileInput.files[0];
+
+      // Create a FormData object to send the image as part of the request
+      const formData = new FormData();
+      formData.append("image", file);
+
+      // Send the image data to the server using the Fetch API
+      fetch("/predict", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          document.querySelector(".results").innerHTML = renderTable(res);
+        });
+    });
+
+    function renderTable(json) {
+      let html = `<table class="resultstable"><tr><td>Class</td><td>Probability</td></tr>`;
+      const rows = json.results.map(
+        (data) => `<tr><td>${data.class}</td><td>${data.probability}</td></tr>`
+      );
+      html = `${html}${rows}</table>`;
+      return html;
+    }
+
+    function loadImage(imageInput) {
+      const file = imageInput.files[0];
+      const reader = new FileReader();
+      const imagePreview = document.createElement("img");
+      reader.addEventListener(
+        "load",
+        function () {
+          imagePreview.src = reader.result;
+          imagePreview.width = 200;
+          document.querySelector(".preview").appendChild(imagePreview);
+        },
+        false
+      );
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+</html>
