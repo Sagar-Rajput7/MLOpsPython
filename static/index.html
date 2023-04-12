@@ -58,6 +58,7 @@
         function () {
           imagePreview.src = reader.result;
           imagePreview.width = 200;
+          document.querySelector(".preview").innerHTML = "";
           document.querySelector(".preview").appendChild(imagePreview);
         },
         false
