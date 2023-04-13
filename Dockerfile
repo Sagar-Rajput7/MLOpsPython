@@ -14,10 +14,14 @@ COPY . .
 
 # Set the environment variable for Flask
 ENV FLASK_APP=app.py
-ENV MODE=prod
+ENV FLASK_ENV=production
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=5000
+ENV LISTEN_PORT=5000
 
-# Expose port 5000 for the Flask app
+
+# Expose port 6002 for the Flask app
 EXPOSE 5000
 
 # Start the Flask app when the container starts
-CMD ["flask", "run", "--host", "127.0.0.1"]
+CMD ["python3", "app.py"]

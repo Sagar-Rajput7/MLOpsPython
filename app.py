@@ -2,6 +2,7 @@ import torch
 import torchvision.transforms as transforms
 from PIL import Image
 from flask import Flask, jsonify, request, send_from_directory
+from flask_cors import cross_origin
 
 model = torch.hub.load('pytorch/vision:v0.9.0',
                        'squeezenet1_1', pretrained=True)
@@ -24,6 +25,10 @@ with app.app_context():
     @app.route('/')
     def index():
         return send_from_directory('static','index.html')
+    @cross_origin()
+    @app.route('/status')
+    def status():
+        return jsonify({'results': 'service is up'})
     @app.route('/static/<path:path>')
     def send_static(path):
         return send_from_directory('static', path)
@@ -58,4 +63,5 @@ with app.app_context():
     # predict(img_path2)
 
     if __name__ == '__main__':
-        app.run(debug=True)
+        print("text")
+        app.run(host='0.0.0.0', port=5000 )
