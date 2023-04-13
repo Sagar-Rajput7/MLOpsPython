@@ -8,16 +8,30 @@
     <title>Image classification</title>
   </head>
   <body>
-    <div class="main">
-      <div class="mainform">
-        <h3 class="head">Upload you file here</h3>
-        <input type="file" name="image" id="image" onchange="loadImage(this)" />
-        <button class="submit" id="submit">Submit</button>
-      </div>
-      <div class="preview"><h3 class="head">Image Preview</h3></div>
-    </div>
+    <div class="container">
+      <h2 class="header">Image Classifier</h2>
+      <div class="main">
+        <div class="dataContainer">
+          <div class="fileUploadContainer">
+            <div class="mainform">
+              <h3 class="head">Upload Image</h3>
+              <input
+                type="file"
+                name="image"
+                id="image"
+                onchange="loadImage(this)"
+              />
+              <button class="submit" id="submit">Submit</button>
+            </div>
+            <div class="results"></div>
+          </div>
 
-    <div class="results"></div>
+          <div class="preview">
+            <h3 class="head">Preview</h3>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
   <script>
     document.getElementById("submit").addEventListener("click", function () {
@@ -36,16 +50,24 @@
       })
         .then((response) => response.json())
         .then((res) => {
-          document.querySelector(".results").innerHTML = renderTable(res);
+          const table = renderTable(res);
+
+          console.log(table);
+          document.querySelector(".results").innerHTML = table;
         });
     });
 
     function renderTable(json) {
       let html = `<table class="resultstable"><tr><td>Class</td><td>Probability</td></tr>`;
-      const rows = json.results.map(
-        (data) => `<tr><td>${data.class}</td><td>${data.probability}</td></tr>`
-      );
-      html = `${html}${rows}</table>`;
+      const results = json.results;
+
+      for (const element of results) {
+        const data = element;
+
+        html += `<tr><td>${data.class}</td><td>${data.probability}</td></tr>`;
+      }
+
+      html = `${html}</table>`;
       return html;
     }
 
@@ -57,9 +79,9 @@
         "load",
         function () {
           imagePreview.src = reader.result;
-          imagePreview.width = 200;
-          document.querySelector(".preview").innerHTML = "";
-          document.querySelector(".preview").appendChild(imagePreview);
+          const imagePreviewContainer = document.querySelector(".preview");
+          imagePreviewContainer.innerHTML = "";
+          imagePreviewContainer.appendChild(imagePreview);
         },
         false
       );
