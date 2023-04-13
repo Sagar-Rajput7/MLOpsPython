@@ -2,7 +2,7 @@ import torch
 import torchvision.transforms as transforms
 from PIL import Image
 from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import cross_origin
+from flask_cors import CORS
 
 model = torch.hub.load('pytorch/vision:v0.9.0',
                        'squeezenet1_1', pretrained=True)
@@ -19,13 +19,13 @@ transform = transforms.Compose([
 ])
 
 app = Flask(__name__)
+CORS(app)
 
 with app.app_context():
 
     @app.route('/')
     def index():
         return send_from_directory('static','index.html')
-    @cross_origin()
     @app.route('/status')
     def status():
         return jsonify({'results': 'service is up'})
